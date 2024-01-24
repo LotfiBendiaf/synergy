@@ -7,7 +7,7 @@ export const metadata: Metadata = {
     default: 'Synergy',
   },
   description: 'The official Work Management System Synergy.',
-  metadataBase: new URL('https://synergy-delta.vercel.app/'),
+  metadataBase: new URL('https://synergy-delta.vercel.app/dashboard'),
 };
  
 export default function Layout({ children }: { children: React.ReactNode }) {

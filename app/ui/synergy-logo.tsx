@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import logo from '@/public/Synergy-logo.png' 
+import logo from '@/public/Synergy-logo2.png' 
 
 export interface UserProps{
   size: number;
