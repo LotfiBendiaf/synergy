@@ -1,4 +1,5 @@
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
+import UserIcon from '@/app/ui/user-icon'
 import clsx from 'clsx';
 import Image from 'next/image';
 import { lusitana } from '@/app/ui/fonts';
@@ -27,18 +28,16 @@ export default async function LatestInvoice() { // Make component async, remove 
                 )}
               >
                 <div className="flex items-center">
-                  <Image
+                  <UserIcon
                     src={invoice.image_url}
                     alt={`${invoice.name}'s profile picture`}
-                    className="mr-4 rounded-full"
-                    width={32}
-                    height={32}
+                    size={28}
                   />
                   <div className="min-w-0">
                     <p className="truncate text-sm font-semibold md:text-base">
                       {invoice.name}
                     </p>
-                    <p className="hidden text-sm text-gray-500 sm:block">
+                    <p className="hidden text-sm text-gray-600 sm:block">
                       {invoice.email}
                     </p>
                   </div>

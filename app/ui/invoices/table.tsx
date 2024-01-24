@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import UserIcon from '@/app/ui/user-icon'
 import { UpdateInvoice, DeleteInvoice } from './buttons';
 import InvoiceStatus from '@/app/ui/invoices/status';
 import { formatDateToLocal, formatCurrency } from '@/app/lib/utils';
@@ -26,11 +27,9 @@ export default async function InvoicesTable({
                 <div className="flex items-center justify-between border-b pb-4">
                   <div>
                     <div className="mb-2 flex items-center">
-                      <Image
+                      <UserIcon
                         src={invoice.image_url}
-                        className="mr-2 rounded-full"
-                        width={28}
-                        height={28}
+                        size={28}
                         alt={`${invoice.name}'s profile picture`}
                       />
                       <p>{invoice.name}</p>
