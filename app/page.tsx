@@ -9,7 +9,7 @@ import Image from 'next/image'
 export default function Page() {
   return (
     <main className="flex min-h-screen flex-col p-6">
-      <div className="flex shrink-0 items-end rounded-lg bg-sky-100 p-4">
+      <div className="flex shrink-0 items-end rounded-lg bg-sky-50 p-4">
         <AcmeLogo width={400} height={200}/>
       </div>
       <div className="mt-4 flex grow flex-col gap-4 md:flex-row">
