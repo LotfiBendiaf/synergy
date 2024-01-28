@@ -11,9 +11,15 @@ const FormSchema = z.object({
   customerId: z.string({
     invalid_type_error: 'Please select a customer.',
   }),
+  project_name: z.string({
+    invalid_type_error: 'Please enter a project name or description.',
+  }),
   amount: z.coerce
     .number()
     .gt(0, { message: 'Please enter an amount greater than $0.' }),
+  progress: z.coerce
+    .number()
+    .gt(0, { message: 'Please enter a correct percetage value' }),
   status: z.enum(['pending', 'paid'], {
     invalid_type_error: 'Please select an invoice status.',
   }),
@@ -34,7 +40,9 @@ const CreateInvoice = FormSchema.omit({ id: true, date: true });
 export type State = {
   errors?: {
     customerId?: string[];
+    project_name?: string[];
     amount?: string[];
+    progress?: string[];
     status?: string[];
   };
   message?: string | null;
@@ -54,7 +62,9 @@ export async function createInvoice(prevState: State, formData: FormData) {
   unstable_noStore();
   const validatedFields = CreateInvoice.safeParse({
     customerId: formData.get('customerId'),
+    project_name: formData.get('project'),
     amount: formData.get('amount'),
+    progress: formData.get('progress'),
     status: formData.get('status'),
   });
   if (!validatedFields.success) {
@@ -63,7 +73,7 @@ export async function createInvoice(prevState: State, formData: FormData) {
       message: 'Missing Fields. Failed to Create Invoice.',
     };
   }
-  const { customerId, amount, status } = validatedFields.data;
+  const { customerId, project_name, amount, progress, status } = validatedFields.data;
   const amountInCents = amount * 100;
   const date = new Date().toISOString().split("T")[0];
   const month = new Date().toDateString().split(' ')[1];
@@ -76,8 +86,8 @@ export async function createInvoice(prevState: State, formData: FormData) {
     const newRevenue = oldRevenue + amount
 
     await sql`
-    INSERT INTO invoices (customer_id, amount, status, date)
-    VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
+    INSERT INTO invoices (customer_id, project_name, amount, progress, status, date)
+    VALUES (${customerId}, ${project_name}, ${amountInCents}, ${progress}, ${status}, ${date})
     `;
 
     if (status === 'paid'){
@@ -109,7 +119,9 @@ export async function updateInvoice(
   unstable_noStore();
   const validatedFields = UpdateInvoice.safeParse({
     customerId: formData.get('customerId'),
+    project_name: formData.get('project'),
     amount: formData.get('amount'),
+    progress: formData.get('progress'),
     status: formData.get('status'),
   });
 
@@ -120,7 +132,7 @@ export async function updateInvoice(
       message: 'Missing Fields. Failed to Update Invoice.',
     };
   }
-  const { customerId, amount, status } = validatedFields.data;
+  const { customerId, project_name, amount, progress, status } = validatedFields.data;
   const amountInCents = amount * 100;
   const month = new Date().toDateString().split(' ')[1];
 
@@ -129,13 +141,11 @@ export async function updateInvoice(
     SELECT revenue FROM revenue WHERE month=${month}
     `;
     const oldRevenue = parseFloat(rev.rows[0]['revenue'])  
-    console.log("Old value : ", oldRevenue)
     const newRevenue = oldRevenue + amount
-    console.log("New value : ", newRevenue)
 
     await sql`
       UPDATE invoices
-      SET customer_id = ${customerId}, amount = ${amountInCents}, status = ${status}
+      SET customer_id = ${customerId}, project_name = ${project_name}, amount = ${amountInCents}, progress = ${progress}, status = ${status}
       WHERE id = ${id}
     `;
 
@@ -148,6 +158,7 @@ export async function updateInvoice(
     }
 
   } catch (error) {
+    console.log(error)
     return { message: 'Database Error: Failed to Update Invoice.' };
   }
  
@@ -172,8 +183,8 @@ export async function createCustomer(prevState: CustomerState, formData: FormDat
   const { customer_name, email } = validatedFields.data;
 
   try{
-    await sql `INSERT INTO customers (name, email)
-    VALUES (${customer_name}, ${email})`
+    await sql `INSERT INTO customers (name, email, image_url)
+    VALUES (${customer_name}, ${email}, '/customers/user.png')`
   }catch (error) {
     console.log(error)
     return { message: 'Database Error: Failed to Create Customer.' };
