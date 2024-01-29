@@ -122,18 +122,18 @@ export default function EditInvoiceForm({
 
         {/* Progress Percentage */}
         <div className="mb-4">
-          <label htmlFor="amount" className="mb-2 block text-sm font-medium">
+          <label htmlFor="progress" className="mb-2 block text-sm font-medium">
           Progress Percentage
           </label>
           <div className="relative mt-2 rounded-md">
             <div className="relative">
               <input
-                id="amount"
-                name="amount"
+                id="progress"
+                name="progress"
                 type="number"
                 step="0.01"
                 defaultValue={invoice.progress}
-                placeholder="Enter USD amount"
+                placeholder="Progress Percentage %"
                 className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
                 aria-describedby='amount-error'
               />

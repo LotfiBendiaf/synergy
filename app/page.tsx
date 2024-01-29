@@ -10,16 +10,16 @@ export default function Page() {
   return (
     <main className="flex min-h-screen flex-col p-6">
       <div className="flex shrink-0 items-end rounded-lg bg-sky-50 p-4">
-        <SynergyLogo size={400}/>
+        <SynergyLogo size={150}/>
       </div>
       <div className="mt-4 flex grow flex-col gap-4 md:flex-row">
         <div className="flex flex-col justify-center gap-6 rounded-lg bg-gray-50 px-6 py-10 md:w-2/5 md:px-20">
           <p className={`${lusitana.className} text-xl font-bold text-gray-800 md:text-3xl md:leading-normal`}>
-            <strong>Welcome to Acme.</strong> This is the example for the{' '}
-            <a href="https://nextjs.org/learn/" className="text-blue-500">
-              Next.js Learn Course
-            </a>
-            , brought to you by Vercel.
+            <strong>Welcome to Synergy.</strong> Streamlined project management App with intuitive task tracking and.{' '}
+            <span className="text-sky-500">
+            Seamless Team Collaboration
+            </span>
+            , for optimizing workflows and achieving project success.
           </p>
           <Link
             href="/login"
