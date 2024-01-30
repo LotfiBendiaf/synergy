@@ -19,6 +19,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <meta property="og:image:alt" content="About Synergy" />
+      </head>
       <body className={`${inter.className} antialiased`}>{children}</body>
     </html>
   );
