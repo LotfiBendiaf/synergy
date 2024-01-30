@@ -98,5 +98,6 @@ export type InvoiceForm = {
   project_name: string;
   amount: number;
   progress: number;
+  date: string;
   status: 'pending' | 'paid';
 };

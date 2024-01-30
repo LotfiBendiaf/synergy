@@ -44,6 +44,7 @@ export type State = {
     project_name?: string[];
     amount?: string[];
     progress?: string[];
+    date?: string[];
     status?: string[];
   };
   message?: string | null;
@@ -108,7 +109,7 @@ export async function createInvoice(prevState: State, formData: FormData) {
 }
 
 // Use Zod to update the expected types
-const UpdateInvoice = FormSchema.omit({ id: true, date: true });
+const UpdateInvoice = FormSchema.omit({ id: true });
 
 // ...
 
@@ -123,6 +124,7 @@ export async function updateInvoice(
     project_name: formData.get('project'),
     amount: formData.get('amount'),
     progress: formData.get('progress'),
+    date: formData.get('date'),
     status: formData.get('status'),
   });
 
@@ -133,9 +135,14 @@ export async function updateInvoice(
       message: 'Missing Fields. Failed to Update Invoice.',
     };
   }
-  const { customerId, project_name, amount, progress, status } = validatedFields.data;
+  const { customerId, project_name, amount, progress, date, status } = validatedFields.data;
   const amountInCents = amount * 100;
   const month = new Date().toDateString().split(' ')[1];
+
+  
+  const current_month = new Date(date)
+
+  console.log("Get Month from : ", date.toString()[0])
 
   try {
     const rev = await sql`
@@ -146,7 +153,7 @@ export async function updateInvoice(
 
     await sql`
       UPDATE invoices
-      SET customer_id = ${customerId}, project_name = ${project_name}, amount = ${amountInCents}, progress = ${progress}, status = ${status}
+      SET customer_id = ${customerId}, project_name = ${project_name}, amount = ${amountInCents}, progress = ${progress}, date = ${date}, status = ${status}
       WHERE id = ${id}
     `;
 
