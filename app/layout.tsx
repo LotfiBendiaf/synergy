@@ -10,6 +10,9 @@ export const metadata: Metadata = {
   },
   description: 'The official Work Management System Synergy.',
   metadataBase: new URL('https://synergy-delta.vercel.app/'),
+  openGraph: {
+    images: 'https://photos.sphereshowcase.com/tBJczsgyzUAP3woETDr31.jpg',
+  },
 };
 
 export default function RootLayout({
