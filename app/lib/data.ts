@@ -102,6 +102,7 @@ export async function fetchFilteredInvoices(
         invoices.id,
         invoices.project_name,
         invoices.amount,
+        invoices.remaining,
         invoices.progress,
         invoices.date,
         invoices.status,
@@ -114,6 +115,7 @@ export async function fetchFilteredInvoices(
         customers.name ILIKE ${`%${query}%`} OR
         customers.email ILIKE ${`%${query}%`} OR
         invoices.amount::text ILIKE ${`%${query}%`} OR
+        invoices.remaining::text ILIKE ${`%${query}%`} OR
         invoices.date::text ILIKE ${`%${query}%`} OR
         invoices.status ILIKE ${`%${query}%`}
       ORDER BY invoices.date DESC
@@ -158,6 +160,7 @@ export async function fetchInvoiceById(id: string) {
         invoices.customer_id,
         invoices.project_name,
         invoices.amount,
+        invoices.remaining,
         invoices.progress,
         invoices.status
       FROM invoices
@@ -168,6 +171,7 @@ export async function fetchInvoiceById(id: string) {
       ...invoice,
       // Convert amount from cents to dollars
       amount: invoice.amount / 100,
+      remaining: invoice.remaining / 100,
     })); // Invoice is an empty array []
     return invoice[0];
   } catch (error) {

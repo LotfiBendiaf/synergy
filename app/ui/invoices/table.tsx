@@ -43,6 +43,12 @@ export default async function InvoicesTable({
                     <p className="text-xl font-medium">
                       {formatCurrency(invoice.amount)}
                     </p>
+                    <p className="text-sm text-gray-500">
+                    Remaining: {formatCurrency(invoice.remaining)}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                    Progress: {invoice.progress}%
+                    </p>
                     <p>{formatDateToLocal(invoice.date)}</p>
                   </div>
                   <div className="flex justify-end gap-2">
@@ -63,10 +69,13 @@ export default async function InvoicesTable({
                   Project Name
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Amount
+                  Montant reglé
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Progress
+                Montant restant
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                  % Progression
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
                   Date
@@ -102,6 +111,9 @@ export default async function InvoicesTable({
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     {formatCurrency(invoice.amount)}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-3">
+                    {formatCurrency(invoice.remaining)}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     {invoice.progress}%

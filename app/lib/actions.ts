@@ -1,5 +1,5 @@
 "use server";
-import { z } from "zod";
+import { string, z } from "zod";
 import { sql } from "@vercel/postgres";
 import { revalidatePath, unstable_noStore } from "next/cache";
 import { redirect } from "next/navigation";
@@ -16,7 +16,10 @@ const FormSchema = z.object({
   }),
   amount: z.coerce
     .number()
-    .gt(0, { message: 'Please enter an amount greater than $0.' }),
+    .gte(0, { message: 'Please enter an amount greater than $0.' }),
+  remaining: z.coerce
+    .number()
+    .gte(0, { message: 'Please enter an amount greater or equal than $0.' }),
   progress: z.coerce
     .number()
     .gte(0, { message: 'Please enter a correct percetage (%) value' })
@@ -36,13 +39,14 @@ const FormSchemaCustomer = z.object({
     invalid_type_error: 'Please select a valid email address.',
   })
 });
-const CreateInvoice = FormSchema.omit({ id: true, date: true });
+const CreateInvoice = FormSchema.omit({ id: true});
 
 export type State = {
   errors?: {
     customerId?: string[];
     project_name?: string[];
     amount?: string[];
+    remaining?: string[];
     progress?: string[];
     date?: string[];
     status?: string[];
@@ -66,7 +70,9 @@ export async function createInvoice(prevState: State, formData: FormData) {
     customerId: formData.get('customerId'),
     project_name: formData.get('project'),
     amount: formData.get('amount'),
+    remaining: formData.get('remaining'),
     progress: formData.get('progress'),
+    date: formData.get('date'),
     status: formData.get('status'),
   });
   if (!validatedFields.success) {
@@ -75,21 +81,61 @@ export async function createInvoice(prevState: State, formData: FormData) {
       message: 'Missing Fields. Failed to Create Invoice.',
     };
   }
-  const { customerId, project_name, amount, progress, status } = validatedFields.data;
+  const { customerId, project_name, amount, remaining, progress, date, status } = validatedFields.data;
   const amountInCents = amount * 100;
-  const date = new Date().toISOString().split("T")[0];
-  const month = new Date().toDateString().split(' ')[1];
+  const remainingInCents = remaining * 100;
+  const monthDate = date.split('-')[1];
+  let month
+  switch(parseInt(monthDate)) {
+    case 1:
+      month = 'Jan';
+      break;
+    case 2:
+      month = 'Feb';
+      break;
+    case 3:
+      month = 'Mar';
+      break;
+    case 4:
+      month = 'Apr';
+      break;
+    case 5:
+      month = 'May';
+      break;
+    case 6:
+      month = 'Jun';
+      break;
+    case 7:
+      month = 'Jul';
+      break;
+    case 8:
+      month = 'Aug';
+      break;
+    case 9:
+      month = 'Sep';
+      break;
+    case 10:
+      month = 'Oct';
+      break;
+    case 11:
+      month = 'Nov';
+      break;
+    case 12:
+      month = 'Dec';
+      break;
+  }
 
   try {
     const rev = await sql`
     SELECT revenue FROM revenue WHERE month=${month}
     `;
     const oldRevenue = parseFloat(rev.rows[0]['revenue'])  
-    const newRevenue = oldRevenue + amount
 
+    const newRevenue = oldRevenue + amount
+    
     await sql`
-    INSERT INTO invoices (customer_id, project_name, amount, progress, status, date)
-    VALUES (${customerId}, ${project_name}, ${amountInCents}, ${progress}, ${status}, ${date})
+    INSERT INTO invoices (customer_id, project_name, amount, remaining, progress, status, date)
+    VALUES (${customerId}, ${project_name}, ${amountInCents}, ${remainingInCents}, ${progress}, ${status}, ${date})
     `;
 
     if (status === 'paid'){
@@ -123,6 +169,7 @@ export async function updateInvoice(
     customerId: formData.get('customerId'),
     project_name: formData.get('project'),
     amount: formData.get('amount'),
+    remaining: formData.get('remaining'),
     progress: formData.get('progress'),
     date: formData.get('date'),
     status: formData.get('status'),
@@ -135,14 +182,13 @@ export async function updateInvoice(
       message: 'Missing Fields. Failed to Update Invoice.',
     };
   }
-  const { customerId, project_name, amount, progress, date, status } = validatedFields.data;
+  const { customerId, project_name, amount, remaining, progress, date, status } = validatedFields.data;
   const amountInCents = amount * 100;
+  const remainingInCents = remaining * 100;
   const month = new Date().toDateString().split(' ')[1];
 
   
   const current_month = new Date(date)
-
-  console.log("Get Month from : ", date.toString()[0])
 
   try {
     const rev = await sql`
@@ -153,7 +199,7 @@ export async function updateInvoice(
 
     await sql`
       UPDATE invoices
-      SET customer_id = ${customerId}, project_name = ${project_name}, amount = ${amountInCents}, progress = ${progress}, date = ${date}, status = ${status}
+      SET customer_id = ${customerId}, project_name = ${project_name}, amount = ${amountInCents}, remaining = ${remainingInCents}, progress = ${progress}, date = ${date}, status = ${status}
       WHERE id = ${id}
     `;
 

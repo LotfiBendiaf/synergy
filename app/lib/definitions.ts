@@ -21,6 +21,7 @@ export type Invoice = {
   customer_id: string;
   project_name: string;
   amount: number;
+  remaining: number;
   progress: number;
   date: string;
   // In TypeScript, this is called a string union type.
@@ -40,6 +41,7 @@ export type LatestInvoice = {
   email: string;
   project_name: string;
   amount: number;
+  remaining: number;
   progress: number;
 };
 
@@ -57,6 +59,7 @@ export type InvoicesTable = {
   date: string;
   project_name: string;
   amount: number;
+  remaining: number;
   progress: number;
   status: 'pending' | 'paid';
 };
@@ -97,6 +100,7 @@ export type InvoiceForm = {
   customer_id: string;
   project_name: string;
   amount: number;
+  remaining: number;
   progress: number;
   date: string;
   status: 'pending' | 'paid';
